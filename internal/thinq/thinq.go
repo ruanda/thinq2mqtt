@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	gatewayURL = "https://kic.lgthinq.com:46030/api/common/gatewayUriList"
+	defaultGatewayURL = "https://kic.lgthinq.com:46030/api/common/gatewayUriList"
 
 	headerApplicationKey = "x-thinq-application-key"
 	headerSecurityKey    = "x-thinq-security-key"
@@ -35,9 +35,10 @@ type Client struct {
 	ApplicationKey string
 	SecurityKey    string
 
-	AuthBase  *url.URL
-	APIRoot   *url.URL
-	OAuthRoot *url.URL
+	GatewayURL *url.URL
+	AuthBase   *url.URL
+	APIRoot    *url.URL
+	OAuthRoot  *url.URL
 
 	common service
 
@@ -54,18 +55,21 @@ func NewClient(config Config, httpClient *http.Client) (*Client, error) {
 			Timeout: time.Second * 10,
 		}
 	}
+	gatewayURL, _ := url.Parse(defaultGatewayURL)
+
 	c := &Client{
 		config:         config,
 		client:         httpClient,
 		ApplicationKey: defaultApplicationKey,
 		SecurityKey:    defaultSecurityKey,
+		GatewayURL:     gatewayURL,
 	}
 	c.common.client = c
 	c.Gateway = (*GatewayService)(&c.common)
 	return c, nil
 }
 
-func (c *Client) NewRequest(method string, baseURL url.URL, url string, body interface{}) (*http.Request, error) {
+func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body interface{}) (*http.Request, error) {
 
 	u, err := baseURL.Parse(url)
 	if err != nil {
