@@ -43,6 +43,7 @@ type Client struct {
 	common service
 
 	Gateway *GatewayService
+	Auth    *AuthService
 }
 
 type service struct {
@@ -66,6 +67,7 @@ func NewClient(config Config, httpClient *http.Client) (*Client, error) {
 	}
 	c.common.client = c
 	c.Gateway = (*GatewayService)(&c.common)
+	c.Auth = (*AuthService)(&c.common)
 	return c, nil
 }
 
