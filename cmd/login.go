@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"context"
-	"os"
 	"fmt"
-	"github.com/spf13/viper"
+	"os"
+
 	"github.com/ruanda/thinq2mqtt/internal/thinq"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var loginCmd = &cobra.Command{
@@ -37,4 +38,17 @@ func loginRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 	fmt.Printf("Log in here:\n%v\n", u)
+
+	fmt.Print("Then paste the URL where the browser is redirected: ")
+
+	var callbackURL string
+	fmt.Scanln(&callbackURL)
+
+	res, err := c.Auth.ParseOAuthCallback(callbackURL)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Refresh token: %s\nAccess token: %s\n", res.RefreshToken, res.AccessToekn)
 }

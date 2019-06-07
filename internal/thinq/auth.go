@@ -4,6 +4,11 @@ import "net/url"
 
 type AuthService service
 
+type CallbackResult struct {
+	RefreshToken string
+	AccessToekn  string
+}
+
 func (s *AuthService) GetOAuthURL() (*url.URL, error) {
 	u, err := s.client.AuthBase.Parse("login/sign_in")
 	if err != nil {
@@ -22,4 +27,17 @@ func (s *AuthService) GetOAuthURL() (*url.URL, error) {
 	u.RawQuery = q.Encode()
 
 	return u, nil
+}
+
+func (s *AuthService) ParseOAuthCallback(callbackURL string) (*CallbackResult, error) {
+	u, err := url.Parse(callbackURL)
+	if err != nil {
+		return nil, err
+	}
+	q := u.Query()
+	res := &CallbackResult{
+		RefreshToken: q.Get("refresh_token"),
+		AccessToekn:  q.Get("access_token"),
+	}
+	return res, nil
 }
