@@ -20,7 +20,8 @@ func loginRun(cmd *cobra.Command, args []string) {
 		CountryCode:  viper.GetString("country"),
 		LanguageCode: viper.GetString("language"),
 		ServiceCode:  viper.GetString("service"),
-		ClientID:     viper.GetString("client"),
+		ClientID:     viper.GetString("client_id"),
+		ClientSecret: viper.GetString("client_secret"),
 	}
 	c, err := thinq.NewClient(cfg, nil)
 	if err != nil {

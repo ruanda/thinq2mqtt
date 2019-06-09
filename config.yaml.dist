@@ -1,6 +1,8 @@
 country: US
 language: en-US
 service: SVC202
-client: LGAO221A02
+client_id: LGAO221A02
+client_secret: c053c2a6ddeb7ad97cb0eed0dcb31cf8
+
 
 refresh_token: XXX

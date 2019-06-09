@@ -16,6 +16,9 @@ const (
 
 	headerApplicationKey = "x-thinq-application-key"
 	headerSecurityKey    = "x-thinq-security-key"
+	headerClientID       = "lgemp-x-app-key"
+	headerSignature      = "lgemp-x-signature"
+	headerDate           = "lgemp-x-date"
 
 	defaultApplicationKey = "thinq"
 	defaultSecurityKey    = "thinq"
@@ -26,6 +29,7 @@ type Config struct {
 	LanguageCode string
 	ServiceCode  string
 	ClientID     string
+	ClientSecret string
 }
 
 type Client struct {
@@ -44,6 +48,10 @@ type Client struct {
 
 	Gateway *GatewayService
 	Auth    *AuthService
+
+	RefreshToken              string
+	AccessToken               string
+	AccessTokenExpirationDate time.Time
 }
 
 type service struct {
@@ -71,13 +79,25 @@ func NewClient(config Config, httpClient *http.Client) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body interface{}) (*http.Request, error) {
+func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body io.Reader) (*http.Request, error) {
 
 	u, err := baseURL.Parse(url)
 	if err != nil {
 		return nil, err
 	}
 
+	req, err := http.NewRequest(method, u.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set(headerApplicationKey, c.ApplicationKey)
+	req.Header.Set(headerSecurityKey, c.SecurityKey)
+	return req, nil
+}
+
+func (c *Client) NewJSONRequest(method string, baseURL *url.URL, url string, body interface{}) (*http.Request, error) {
 	var buf io.ReadWriter
 	if body != nil {
 		buf = new(bytes.Buffer)
@@ -89,7 +109,7 @@ func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body in
 		}
 	}
 
-	req, err := http.NewRequest(method, u.String(), buf)
+	req, err := c.NewRequest(method, baseURL, url, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -97,9 +117,7 @@ func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body in
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set(headerApplicationKey, c.ApplicationKey)
-	req.Header.Set(headerSecurityKey, c.SecurityKey)
+
 	return req, nil
 }
 

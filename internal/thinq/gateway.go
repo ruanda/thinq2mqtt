@@ -34,7 +34,7 @@ func (s *GatewayService) Discover(ctx context.Context) error {
 		},
 	}
 
-	req, err := s.client.NewRequest("POST", s.client.GatewayURL, "", reqData)
+	req, err := s.client.NewJSONRequest("POST", s.client.GatewayURL, "", reqData)
 	if err != nil {
 		return err
 	}
