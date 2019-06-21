@@ -2,6 +2,7 @@ package thinq
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 )
 
@@ -46,17 +47,17 @@ func (s *GatewayService) Discover(ctx context.Context) error {
 		return err
 	}
 
-	authBase, err := url.Parse(gResp.Root.EmpURI)
+	authBase, err := url.Parse(fmt.Sprintf("%s/", gResp.Root.EmpURI))
 	if err != nil {
 		return err
 	}
 
-	apiRoot, err := url.Parse(gResp.Root.ThinqURI)
+	apiRoot, err := url.Parse(fmt.Sprintf("%s/", gResp.Root.ThinqURI))
 	if err != nil {
 		return err
 	}
 
-	oAuthRoot, err := url.Parse(gResp.Root.OAuthURI)
+	oAuthRoot, err := url.Parse(fmt.Sprintf("%s/", gResp.Root.OAuthURI))
 	if err != nil {
 		return err
 	}

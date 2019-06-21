@@ -16,6 +16,8 @@ const (
 
 	headerApplicationKey = "x-thinq-application-key"
 	headerSecurityKey    = "x-thinq-security-key"
+	headerAccessToken    = "x-thinq-token"
+	headerSessionID      = "x-thinq-jsessionId"
 	headerClientID       = "lgemp-x-app-key"
 	headerSignature      = "lgemp-x-signature"
 	headerDate           = "lgemp-x-date"
@@ -48,10 +50,13 @@ type Client struct {
 
 	Gateway *GatewayService
 	Auth    *AuthService
+	Session *SessionService
+	Devices DeviceService
 
 	RefreshToken              string
 	AccessToken               string
 	AccessTokenExpirationDate time.Time
+	SessionID                 string
 }
 
 type service struct {
@@ -74,8 +79,10 @@ func NewClient(config Config, httpClient *http.Client) (*Client, error) {
 		GatewayURL:     gatewayURL,
 	}
 	c.common.client = c
+	c.Devices.client = c
 	c.Gateway = (*GatewayService)(&c.common)
 	c.Auth = (*AuthService)(&c.common)
+	c.Session = (*SessionService)(&c.common)
 	return c, nil
 }
 
@@ -94,6 +101,12 @@ func (c *Client) NewRequest(method string, baseURL *url.URL, url string, body io
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set(headerApplicationKey, c.ApplicationKey)
 	req.Header.Set(headerSecurityKey, c.SecurityKey)
+	if c.AccessToken != "" {
+		req.Header.Set(headerAccessToken, c.AccessToken)
+	}
+	if c.SessionID != "" {
+		req.Header.Set(headerSessionID, c.SessionID)
+	}
 	return req, nil
 }
 
