@@ -21,6 +21,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 	rootCmd.AddCommand(testCmd)
 	rootCmd.AddCommand(loginCmd)
+	rootCmd.AddCommand(serverCmd)
 }
 
 func initConfig() {

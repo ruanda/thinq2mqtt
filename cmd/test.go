@@ -44,4 +44,11 @@ func testRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	err = c.Session.Start(context.Background())
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 }

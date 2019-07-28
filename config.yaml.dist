@@ -4,5 +4,7 @@ service: SVC202
 client_id: LGAO221A02
 client_secret: c053c2a6ddeb7ad97cb0eed0dcb31cf8
 
-
 refresh_token: XXX
+
+mqtt_server: tcp://localhost:1883
+mqtt_topic: thinq
